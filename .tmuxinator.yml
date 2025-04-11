@@ -1,0 +1,89 @@
+# ./.tmuxinator.yml
+
+name: 2310_mission_launch
+root: ~/<% @args[0] %>
+
+# Optional tmux socket
+# socket_name: foo
+
+# Note that the pre and post options have been deprecated and will be replaced by
+# project hooks.
+
+# Project hooks
+
+# Runs on project start, always
+# on_project_start:
+
+# Run on project start, the first time
+# on_project_first_start: command
+
+# Run on project start, after the first time
+# on_project_restart: command
+
+# Run on project exit ( detaching from tmux session )
+# on_project_exit: command
+
+# Run on project stop
+# on_project_stop: command
+
+# Runs in each window and pane before window/pane specific commands. Useful for setting up interpreter versions.
+# pre_window: rbenv shell 2.0.0-p247
+
+# Pass command line options to tmux. Useful for specifying a different tmux.conf.
+tmux_options: -f ~/.tmux.conf
+
+# Change the command to call tmux. This can be used by derivatives/wrappers like byobu.
+# tmux_command: byobu
+
+# Specifies (by name or index) which window will be selected on project startup. If not set, the first window is used.
+startup_window: Remote_PC
+
+# Specifies (by index) which pane of the specified window will be selected on project startup. If not set, the first pane is used.
+# startup_pane: 1
+
+# Controls whether the tmux session should be attached to automatically. Defaults to true.
+# attach: false
+
+windows:
+  - RPi:
+      layout: main-horizontal
+      panes:
+        - rosbu:
+          - ssh ubuntu@<%= @settings["turtlebotIP"] %>
+          - rosbu
+        - ir_pub:
+          - ssh ubuntu@<%= @settings["turtlebotIP"] %>
+          - ros2 run casualty_locate ir_pub
+        - launcher_service:
+          - ssh ubuntu@<%= @settings["turtlebotIP"] %>
+          - ros2 run turtlebot_launcher launcher_service
+  - Remote_PC:
+      layout: 5dad,86x44,0,0[86x13,0,0,2,86x30,0,14{28x30,0,14,6,28x30,29,14,7,28x30,58,14,8}]
+      panes:
+        # launch order is Nav2_Stack -> Slam_Toolbox -> RViz -> Mission_Control
+        # we will also wait a bit before Nav2_Stack to let rosbu and such startup
+        - Mission Control:
+          - echo "Waiting for connection to turtlebot..."
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 6 %>
+          - ros2 launch mission_control mission_start.launch.py
+        - Nav2 Stack:
+          - echo "Waiting for connection to turtlebot..."
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 0 %>
+          - ros2 launch mission_control navigation.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
+        - Slam Toolbox:
+          - echo "Waiting for connection to turtlebot..."
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 2 %>
+          - ros2 launch mission_control online_async.launch.py
+        - RViz:
+          - echo "Waiting for connection to turtlebot..."
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 4 %>
+          - ros2 launch mission_control rviz.launch.py rviz_config:=<%= @args[0] %>/src/mission_control/config/rviz_marker_view.rviz
+
+  - Monitors:
+      layout: even-vertical
+      panes:
+        - RPi:
+          - ssh ubuntu@<%= @settings["turtlebotIP"] %>
+          - top
+        - Remote PC:
+          - top

@@ -36,15 +36,18 @@ tmuxinator edit --local 2310_mission_launch
 
 ## Intended Usage Example
 3 tmux windows are opened: RPi, Remote_PC, Monitors
+
 RPi
  - rosbu
  - ir_node
  - launcher_service
+
 Remote_PC (see below)
  - Mission_Control
  - Nav2_Stack
  - Slam_Toolbox
  - RViz
+
 Monitors
  - RPi top
  - Remote PC top

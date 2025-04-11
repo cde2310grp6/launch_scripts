@@ -26,6 +26,9 @@ Remote_PC scripts are programmed to start after waiting ```expected_ssh_time``` 
 tmuxinator start 2310_mission_launch ~/2310_workspace turtlebotIP=192.168.1.1 expected_ssh_time=10
 ```
 
+### Custom tmux Shortcut
+Ctrl B + K to kill entire tmux session
+
 
 ## Making Edits
 From the directory of this repo, 

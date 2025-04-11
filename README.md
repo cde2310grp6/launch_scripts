@@ -7,7 +7,11 @@
 
 ## Usage
 Run the launch command from the directory of this repo
-In your launch command, you must specify 1. dir of your Remote PC's ros_ws 2. hostname of your turtlebot, e.g.
+In your launch command, you must specify 
+ 1. dir of your Remote PC's ros_ws
+ 2. hostname of your turtlebot
+
+For example, 
 ```bash
 tmuxinator start 2310_mission_launch ~/2310_workspace turtlebotIP=192.168.1.1
 ```

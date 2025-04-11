@@ -65,7 +65,7 @@ windows:
         - Mission Control:
           - echo "Waiting for connection to turtlebot..."
           - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 6 %>
-          - ros2 launch mission_control mission_start.launch.py
+          - ros2 launch mission_control mission_start.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
         - Nav2 Stack:
           - echo "Waiting for connection to turtlebot..."
           - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 0 %>
@@ -73,7 +73,7 @@ windows:
         - Slam Toolbox:
           - echo "Waiting for connection to turtlebot..."
           - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 2 %>
-          - ros2 launch mission_control online_async.launch.py
+          - ros2 launch mission_control online_async.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
         - RViz:
           - echo "Waiting for connection to turtlebot..."
           - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 4 %>

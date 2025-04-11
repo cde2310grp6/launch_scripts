@@ -1,7 +1,7 @@
 # ./.tmuxinator.yml
 
 name: 2310_mission_launch
-root: ~/<% @args[0] %>
+root: ~/
 
 # Optional tmux socket
 # socket_name: foo
@@ -30,7 +30,7 @@ root: ~/<% @args[0] %>
 # pre_window: rbenv shell 2.0.0-p247
 
 # Pass command line options to tmux. Useful for specifying a different tmux.conf.
-tmux_options: -f ~/.tmux.conf
+tmux_options: -f <%= File.expand_path(".tmux.conf", ENV["TMUXINATOR_CONFIG"] || Dir.pwd) %>
 
 # Change the command to call tmux. This can be used by derivatives/wrappers like byobu.
 # tmux_command: byobu

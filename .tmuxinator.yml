@@ -53,7 +53,7 @@ windows:
           - rosbu
         - ir_pub:
           - ssh ubuntu@<%= @settings["turtlebotIP"] %>
-          - ros2 run casualty_locate ir_pub
+          - ros2 run casualty_location ir_pub
         - launcher_service:
           - ssh ubuntu@<%= @settings["turtlebotIP"] %>
           - ros2 run turtlebot_launcher launcher_service
@@ -64,19 +64,25 @@ windows:
         # we will also wait a bit before Nav2_Stack to let rosbu and such startup
         - Mission Control:
           - echo "Waiting for connection to turtlebot..."
-          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 6 %>
-          - ros2 launch mission_control mission_start.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'false' %>
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 12 %>
+          - cd <%= @args[0] %>
+          - source install/setup.bash
+          - ros2 launch mission_control mission_start.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
         - Nav2 Stack:
           - echo "Waiting for connection to turtlebot..."
           - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 0 %>
-          - ros2 launch mission_control navigation.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'false' %>
+          - cd <%= @args[0] %>
+          - source install/setup.bash
+          - ros2 launch mission_control navigation.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
         - Slam Toolbox:
           - echo "Waiting for connection to turtlebot..."
-          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 2 %>
-          - ros2 launch mission_control online_async.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'false' %>
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 6 %>
+          - cd <%= @args[0] %>
+          - source install/setup.bash 
+          - ros2 launch mission_control online_async.launch.py use_sim_time:=<%= @settings["use_sim_time"] || 'False' %>
         - RViz:
           - echo "Waiting for connection to turtlebot..."
-          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 4 %>
+          - sleep <%= (@settings["expected_ssh_time"] || 0).to_i + 9 %>
           - ros2 launch mission_control rviz.launch.py rviz_config:=<%= @args[0] %>/src/mission_control/config/rviz_marker_view.rviz
 
   - Monitors:
